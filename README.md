@@ -1,6 +1,6 @@
-# dots_and_boxes
+# Dots and Boxes
 
-A new Flutter project.
+the game dots and boxes
 
 ## Getting Started
 
