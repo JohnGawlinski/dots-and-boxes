@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'game_page.dart';
+import 'game_service.dart';
+import 'online_game_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
+final gameService = GameService();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,8 +92,6 @@ class MainMenuPage extends StatelessWidget {
                 );
               },
             ),
-
-            
           ],
         ),
       ),
@@ -241,8 +242,7 @@ class MultiplayerPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        const OnlineMultiplayerPage(),
+                    builder: (context) => const OnlineGamePage(roomId: 1),
                   ),
                 );
               },
