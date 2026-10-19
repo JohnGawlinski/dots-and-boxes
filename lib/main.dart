@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import 'game_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+final supabase = Supabase.instance.client;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://temgkfqytykuybtizees.supabase.co',
+    publishableKey: 'sb_publishable_bk4Qvrb4Tx89nkjeQ06gPQ_pd1WK1bY',
+  );
+
   runApp(const DotsAndBoxesApp());
 }
 
