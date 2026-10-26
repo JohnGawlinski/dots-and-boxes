@@ -4,10 +4,12 @@ import 'game_service.dart';
 
 class OnlineGamePage extends StatefulWidget {
   final int roomId;
+  final int playerId;
 
   const OnlineGamePage({
     super.key,
     required this.roomId,
+    required this.playerId,
   });
 
   @override

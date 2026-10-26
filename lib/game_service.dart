@@ -25,25 +25,50 @@ class GameService {
   }
 
   
-Future<String> makeMove({
-  required int roomId,
-  required int playerId,
-  required int row,
-  required int col,
-  required String direction,
-}) async {
-  final result = await supabase.rpc(
-    'make_move',
-    params: {
-      'x': row,
-      'y': col,
-      'direction': direction,
-      'roomid': roomId,
-      'playerid': playerId,
-    },
-  );
+  
+  Future<String> makeMove({
+    required int roomId,
+    required int playerId,
+    required int row,
+    required int col,
+    required String direction,
+  }) async {
+    final result = await supabase.rpc(
+      'make_move',
+      params: {
+        'x': row,
+        'y': col,
+        'direction': direction,
+        'roomid': roomId,
+        'playerid': playerId,
+      },
+    );
 
-  return result.toString();
-}
+    return result.toString();
+  }
 
+  Future<int> joinRoom({
+    required int roomId,
+    required int playerId,
+  }) async {
+    final result = await supabase.rpc(
+      'joinroom',
+      params: {
+        'roomid': roomId,
+        'myid': playerId,
+      },
+    );
+
+    final message = result.toString();
+
+    if (message == 'Room joined as player 1') {
+      return 1;
+    }
+
+    if (message == 'Room joined as player 2') {
+      return 2;
+    }
+
+    throw Exception(message);
+  }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'game_page.dart';
 import 'game_service.dart';
-import 'online_game_page.dart';
+import 'join_room_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
@@ -237,7 +237,7 @@ class MultiplayerPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const OnlineGamePage(roomId: 1),
+                    builder: (context) => const JoinRoomPage(),
                   ),
                 );
               },
