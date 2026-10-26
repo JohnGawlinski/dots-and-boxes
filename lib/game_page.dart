@@ -169,10 +169,6 @@ class _GamePageState extends State<GamePage> {
       setState(() {
         selectedRow = null;
         selectedCol = null;
-
-        if (lineAdded) {
-          finishMove();
-        }
       });
 
       return;
@@ -193,9 +189,15 @@ class _GamePageState extends State<GamePage> {
       setState(() {
         selectedRow = row;
         selectedCol = col;
+
+        if (lineAdded) {
+          finishMove();
+        }
       });
 
-      return;
+      if (lineAdded) {
+        scheduleAiTurn();
+      }
     }
 
     bool lineAdded = false;
