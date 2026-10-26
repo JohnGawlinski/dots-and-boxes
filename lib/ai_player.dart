@@ -98,7 +98,7 @@ class DotsBoxesAI {
    /// a random roll is above the weight. A lower threshold means a more
    /// aggressive AI. It drops by the attackStep each pass on an attack and
    /// rises each attack.
-   double attackThreshold == attackStart;
+   double attackThreshold = attackStart;
 
    DotsBoxesAI({required this.level, Random? random})
       : _random = random ?? Random();
