@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class GamePage extends StatefulWidget {
-  const GamePage({super.key});
+  const GamePage({super.key, this.aiLevel});
 
   @override
   State<GamePage> createState() => _GamePageState();
@@ -11,6 +11,108 @@ class _GamePageState extends State<GamePage> {
   static const int gridSize = 5;
 
   int currentPlayer = 1;
+
+  /// AI SETUP
+  int? humanPlayer;
+  DotsBoxesAI? ai;
+
+  bool get isAiGame => widget.aiLevel != null;
+
+  int get aiPlayer => humanPlayer == 1 ? 2 : 1;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (isAiGame) {
+      ai = DotsBoxesAI(level: widget.aiLevel!);
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        promptForSide();
+      });
+    }
+  }
+
+  void promptForSide() {
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'Level ${widget.aiLevel}',
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            'Which player do you want to be, human?\n\n'
+            'Player 1 goes first.\n'
+            'Player 2 goes second.',
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                chooseSide(1);
+              },
+              child: const Text('Player 1'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                chooseSide(2);
+              },
+              child: const Text('Player 2'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void chooseSide(int player) {
+    setState(() {
+      humanPlayer = player;
+    });
+
+    scheduleAiTurn();
+  }
+
+  /// AI TURN
+  void scheduleAiTurn() {
+    if (!isAiGame || humanPlayer == null) return;
+    if (isGameOver() || currentPlayer != aiPlayer) return;
+
+    /// Small pause
+    Future.delayed(const Duration(milliseconds: 600), makeAiMove);
+  }
+
+  void makeAiMove() {
+    if (!mounted || !isAiGame || humanPlayer == null) return;
+    if (isGameOver() || currentPlayer != aiPlayer) return;
+
+    final move = ai!.chooseMove(gridSize, horizontalLines, verticalLines);
+
+    if (move == null) return;
+
+    setState(() {
+      selectedRow = null;
+      selectedCol = null;
+
+      if (move.horizontal) {
+        horizontalLines[horizontalKey(move.row,move.col)] = aiPlayer;
+      } else {
+        verticalLines[verticalKey(move.row,move.col)] = aiPlayer;
+      }
+
+      finishMove();
+    });
+
+    scheduleAiTurn();
+  }
 
   int player1Score = 0;
   int player2Score = 0;
@@ -44,6 +146,11 @@ class _GamePageState extends State<GamePage> {
   // --------------------------------------------------
 
   void selectDot(int row, int col) {
+    /// AI Turn = ignore human interaction
+    if (isAiGame && (humanPlayer == null || currentPlayer != humanPlayer)) {
+      return;
+    }
+
     // First dot selected.
     if (selectedRow == null || selectedCol == null) {
       setState(() {
@@ -62,6 +169,10 @@ class _GamePageState extends State<GamePage> {
       setState(() {
         selectedRow = null;
         selectedCol = null;
+
+        if (lineAdded) {
+          finishMove();
+        }
       });
 
       return;
@@ -122,19 +233,27 @@ class _GamePageState extends State<GamePage> {
       selectedCol = null;
 
       if (lineAdded) {
-  bool completedBox = checkForBoxes();
+        finishMove();
+      }
+    });
 
-  if (!completedBox) {
-    switchPlayer();
+    if (lineAdded) {
+      scheduleAiTurn();
+    }
   }
 
-  if (isGameOver()) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showGameOverScreen();
-    });
-  }
-}
-    });
+  void finishMove() {
+    bool completedBox = checkForBoxes();
+
+    if (!completedBox) {
+      switchPlayer();
+    }
+
+    if (isGameOver()) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showGameOverScreen();
+      });
+    }
   }
 
   // --------------------------------------------------
@@ -278,6 +397,9 @@ void showGameOverScreen() {
 }
 
 void resetGame() {
+  ai?.reset();
+  humanPlayer = null;
+  
   horizontalLines.clear();
   verticalLines.clear();
   boxes.clear();

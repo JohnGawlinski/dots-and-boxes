@@ -178,22 +178,22 @@ class SingleplayerPage extends StatelessWidget {
               const SizedBox(height: 30),
 
               MenuButton(
-                text: 'Easy',
+                text: 'Level 1',
                 onPressed: () {},
               ),
 
               MenuButton(
-                text: 'Medium',
+                text: 'Level 2',
                 onPressed: () {},
               ),
 
               MenuButton(
-                text: 'Hard',
+                text: 'Level 3',
                 onPressed: () {},
               ),
 
               MenuButton(
-                text: 'Impossible',
+                text: 'Level 4',
                 onPressed: () {},
               ),
 
