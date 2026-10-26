@@ -123,7 +123,7 @@ class DotsBoxesAI {
             return level1Move(moves);
          case 2:
             return level2Move(moves, board);
-         case 3:
+         default:
             return level3Move(moves, board);
       }
    }
