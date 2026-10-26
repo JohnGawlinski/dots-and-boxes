@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -17,7 +18,13 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
 
   static const int roomId = 1;
 
-  String status = 'Joining Room 1...';
+  Timer? checkTimer;
+  int? playerId;
+  int? playerNumber;
+
+  String status = 'Connecting to Room 1...';
+  bool isChecking = false;
+  bool gameStarted = false;
 
   @override
   void initState() {
@@ -25,53 +32,120 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
     joinRoom();
   }
 
-  
-  
-Future<void> joinRoom() async {
-  // Generate the player ID before the try block.
-  final int playerId = Random.secure().nextInt(2000000000) + 1;
+  Future<void> joinRoom() async {
+    try {
+      final id = Random.secure().nextInt(2000000000) + 1;
 
-  try {
-    final int playerNumber = await gameService.joinRoom(
-      roomId: roomId,
-      playerId: playerId,
-    );
+      final assignedNumber = await gameService.joinRoom(
+        roomId: roomId,
+        playerId: id,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    debugPrint('Joined as Player $playerNumber');
+      playerId = id;
+      playerNumber = assignedNumber;
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OnlineGamePage(
-          roomId: roomId,
-          playerId: playerId,
-        ),
-      ),
-    );
-  } catch (error) {
-    if (!mounted) return;
+      setState(() {
+        status = assignedNumber == 1
+            ? 'Waiting for Player 2...'
+            : 'Waiting for game to start...';
+      });
 
-    setState(() {
-      status = 'Unable to join room:\n$error';
-    });
+      // Check immediately, then once every 2 seconds.
+      await checkRoom();
+
+      if (!mounted || gameStarted) return;
+
+      checkTimer = Timer.periodic(
+        const Duration(seconds: 2),
+        (_) => checkRoom(),
+      );
+    } catch (error) {
+      if (!mounted) return;
+
+      setState(() {
+        status = 'Unable to join room:\n$error';
+      });
+    }
   }
-}
 
+  Future<void> checkRoom() async {
+    if (isChecking || gameStarted || !mounted) return;
 
+    isChecking = true;
+
+    try {
+      final ready = await gameService.areBothPlayersReady(roomId);
+
+      if (!mounted || gameStarted) return;
+
+      if (ready && playerId != null) {
+        gameStarted = true;
+        checkTimer?.cancel();
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => OnlineGamePage(
+              roomId: roomId,
+              playerId: playerId!,
+            ),
+          ),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          status = 'Error checking room:\n$error';
+        });
+      }
+    } finally {
+      isChecking = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    checkTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Online Multiplayer'),
+        title: const Text('Online Matchmaking'),
       ),
       body: Center(
-        child: Text(
-          status,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 30),
+              const Text(
+                'Searching for opponent...',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                status,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                playerNumber == null
+                    ? 'Room 1'
+                    : 'Room 1 - Player $playerNumber',
+              ),
+            ],
+          ),
         ),
       ),
     );

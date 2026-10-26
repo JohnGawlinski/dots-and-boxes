@@ -25,6 +25,21 @@ class GameService {
   }
 
   
+  Future<bool> areBothPlayersReady(int roomId) async {
+    final data = await supabase
+        .from('mile2board')
+        .select('player1id, player2id')
+        .eq('roomid', roomId)
+        .maybeSingle();
+
+    if (data == null) {
+      return false;
+    }
+
+    return data['player1id'] != null &&
+        data['player2id'] != null;
+  }
+
   
   Future<String> makeMove({
     required int roomId,
