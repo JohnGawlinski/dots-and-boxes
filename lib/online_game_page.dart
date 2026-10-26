@@ -110,7 +110,7 @@ Future<void> selectDot(int row, int col) async {
       direction: horizontal ? 'horizontal' : 'vertical',
       roomId: widget.roomId,
       playerId: widget.playerId,
-);
+
     );
 
     if (!mounted) return;
