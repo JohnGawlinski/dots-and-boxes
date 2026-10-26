@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'ai_player.dart';
 
 class GamePage extends StatefulWidget {
+  final int? aiLevel;
+  
   const GamePage({super.key, this.aiLevel});
 
   @override
@@ -189,15 +192,9 @@ class _GamePageState extends State<GamePage> {
       setState(() {
         selectedRow = row;
         selectedCol = col;
-
-        if (lineAdded) {
-          finishMove();
-        }
       });
 
-      if (lineAdded) {
-        scheduleAiTurn();
-      }
+      return;
     }
 
     bool lineAdded = false;
@@ -321,9 +318,9 @@ void showGameOverScreen() {
   String result;
 
   if (player1Score > player2Score) {
-    result = 'Player 1 Wins!';
+    result = playerWinText(1);
   } else if (player2Score > player1Score) {
-    result = 'Player 2 Wins!';
+    result = playerWinText(2);
   } else {
     result = 'Tie Game!';
   }
@@ -351,7 +348,7 @@ void showGameOverScreen() {
             const SizedBox(height: 25),
 
             Text(
-              'Player 1: $player1Score',
+              '${playerLabel(1)}: $player1Score',
               style: TextStyle(
                 fontSize: 20,
                 color: playerColor(1),
@@ -362,7 +359,7 @@ void showGameOverScreen() {
             const SizedBox(height: 8),
 
             Text(
-              'Player 2: $player2Score',
+              '${playerLabel(2)}: $player2Score',
               style: TextStyle(
                 fontSize: 20,
                 color: playerColor(2),
@@ -380,6 +377,10 @@ void showGameOverScreen() {
               setState(() {
                 resetGame();
               });
+
+              if (isAiGame} {
+                promptForSide();
+              }
             },
             child: const Text('Play Again'),
           ),
@@ -396,6 +397,22 @@ void showGameOverScreen() {
       );
     },
   );
+}
+
+String playerWinText(int player) {
+  if (isAiGame && humanPlayer != null) {
+    return player == humanPlayer ? 'You Win!' : "AI Wins!';
+  }
+
+  return 'Player $player Wins!';
+}
+
+String playerLabel(int player) {
+  if (isAiGame && humanPlayer != null) {
+    return player == humanPlayer ? 'Player $player (You)' : Player $player (AI)';
+  }
+
+  return 'Player $player';
 }
 
 void resetGame() {
@@ -622,7 +639,7 @@ void resetGame() {
             const SizedBox(height: 20),
 
             Text(
-              'Player $currentPlayer\'s Turn',
+              '${playerLabel(currentPlayer)}\'s Turn',
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
@@ -636,7 +653,7 @@ void resetGame() {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Player 1: $player1Score',
+                  '${playerLabel(1)}: $player1Score',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -647,7 +664,7 @@ void resetGame() {
                 const SizedBox(width: 30),
 
                 Text(
-                  'Player 2: $player2Score',
+                  '${playerLabel(2)}: $player2Score',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
