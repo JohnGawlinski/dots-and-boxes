@@ -62,15 +62,15 @@ class GameService {
     return result.toString();
   }
 
-  Future<int> joinRoom({
-    required int roomId,
+  Future<int> joinroomint({
     required int playerId,
+    required int roomId,
   }) async {
     final result = await supabase.rpc(
       'joinroom',
       params: {
-        'roomid': roomId,
         'myid': playerId,
+        'roomid': roomId,
       },
     );
 
