@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'game_service.dart';
 
@@ -36,7 +38,7 @@ class _OnlineGamePageState extends State<OnlineGamePage> {
 
   // Temporary testing ID.
   // Room 1 currently has player1id = 1.
-  final int playerId = 1;
+  final int playerId = Random.secure().nextInt(2000000000) + 1;
 
   bool isLoading = true;
   String? errorMessage;

@@ -37,8 +37,8 @@ class _JoinRoomPageState extends State<JoinRoomPage> {
       final id = Random.secure().nextInt(2000000000) + 1;
 
       final assignedNumber = await gameService.joinRoom(
-        roomId: roomId,
         playerId: id,
+        roomId: roomId,
       );
 
       if (!mounted) return;
