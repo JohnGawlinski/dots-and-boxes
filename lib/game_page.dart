@@ -378,7 +378,7 @@ void showGameOverScreen() {
                 resetGame();
               });
 
-              if (isAiGame} {
+              if (isAiGame) {
                 promptForSide();
               }
             },
@@ -401,7 +401,7 @@ void showGameOverScreen() {
 
 String playerWinText(int player) {
   if (isAiGame && humanPlayer != null) {
-    return player == humanPlayer ? 'You Win!' : "AI Wins!';
+    return player == humanPlayer ? 'You Win!' : 'AI Wins!';
   }
 
   return 'Player $player Wins!';
@@ -409,7 +409,7 @@ String playerWinText(int player) {
 
 String playerLabel(int player) {
   if (isAiGame && humanPlayer != null) {
-    return player == humanPlayer ? 'Player $player (You)' : Player $player (AI)';
+    return player == humanPlayer ? 'Player $player (You)' : 'Player $player (AI)';
   }
 
   return 'Player $player';
