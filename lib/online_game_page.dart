@@ -104,12 +104,12 @@ Future<void> selectDot(int row, int col) async {
   });
 
   try {
-    final result = await gameService.makeMove(
-      roomId: widget.roomId,
-      playerId: playerId,
+    final result = await gameService.makeMove(  
       row: lineRow,
       col: lineCol,
       direction: horizontal ? 'horizontal' : 'vertical',
+      roomId: widget.roomId,
+      playerId: playerId,
     );
 
     if (!mounted) return;
