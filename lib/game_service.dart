@@ -62,7 +62,7 @@ class GameService {
     return result.toString();
   }
 
-  Future<int> joinroomint({
+  Future<int> joinRoom({
     required int playerId,
     required int roomId,
   }) async {

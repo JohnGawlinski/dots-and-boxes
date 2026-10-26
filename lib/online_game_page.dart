@@ -10,8 +10,9 @@ class OnlineGamePage extends StatefulWidget {
 
   const OnlineGamePage({
     super.key,
-    required this.roomId,
     required this.playerId,
+    required this.roomId,
+    
   });
 
   @override
@@ -19,6 +20,8 @@ class OnlineGamePage extends StatefulWidget {
 }
 
 class _OnlineGamePageState extends State<OnlineGamePage> {
+  bool bothPlayersReady = false;
+  
   static const int gridSize = 5;
 
   final GameService gameService = GameService();
@@ -166,6 +169,13 @@ Future<void> selectDot(int row, int col) async {
         errorMessage = error.toString();
       });
     }
+    final ready = await gameService.areBothPlayersReady(widget.roomId);
+
+if (!mounted) return;
+
+setState(() {
+  bothPlayersReady = ready;
+});
   }
 
   String lineKey(int row, int col) => '$row,$col';
