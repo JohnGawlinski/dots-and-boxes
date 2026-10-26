@@ -55,7 +55,7 @@ class AiBoard {
       if (_h(r,c)) count++;
       if (_h(r+1,c)) count++;
       if (_v(r,c)) count++;
-      if (_v(r+1,c)) count++;
+      if (_v(r,c+1)) count++;
       return count;
    }
 
