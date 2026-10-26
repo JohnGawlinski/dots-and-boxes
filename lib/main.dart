@@ -168,7 +168,7 @@ class SingleplayerPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                'Select Difficulty',
+                'Select Level',
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -177,25 +177,20 @@ class SingleplayerPage extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              MenuButton(
-                text: 'Level 1',
-                onPressed: () {},
-              ),
+              /// UPDATE AS MORE LEVELS ARE ADDED
+              for (int level = 1; level <= 3; level++)
+                MenuButton(
+                  text: 'Level $level',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GamePage(aiLevel: level),
+                      ),
+                    );
+                  },
+                ),
 
-              MenuButton(
-                text: 'Level 2',
-                onPressed: () {},
-              ),
-
-              MenuButton(
-                text: 'Level 3',
-                onPressed: () {},
-              ),
-
-              MenuButton(
-                text: 'Level 4',
-                onPressed: () {},
-              ),
 
               // Extra space before Back
               const SizedBox(height: 35),
