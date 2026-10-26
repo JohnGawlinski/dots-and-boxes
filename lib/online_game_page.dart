@@ -103,35 +103,58 @@ Future<void> selectDot(int row, int col) async {
     isSubmittingMove = true;
   });
 
-  try {
-    final result = await gameService.makeMove(
-      row: lineRow,
-      col: lineCol,
-      direction: horizontal ? 'horizontal' : 'vertical',
-      roomId: widget.roomId,
-      playerId: widget.playerId,
 
-    );
+  debugPrint('========== MAKE MOVE RPC ==========');
+  debugPrint('Function: public.make_move');
+  debugPrint('Parameters:');
 
-    if (!mounted) return;
+  params.forEach((key, value) {
+    debugPrint('  $key = $value (${value.runtimeType})');
+  });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result)),
-    );
+  debugPrint('SQL equivalent:');
+  debugPrint(
+    "SELECT public.make_move("
+    "x := ${params['x']}, "
+    "y := ${params['y']}, "
+    "direction := '${params['direction']}', "
+    "roomid := ${params['roomid']}, "
+    "playerid := ${params['playerid']}"
+    ");",
+  );
+  debugPrint('===================================');
 
-    await loadGame();
-  } catch (error) {
-    if (!mounted) return;
+  final result = await gameService.makeMove(
+    row: lineRow,
+    col: lineCol,
+    direction: horizontal ? 'horizontal' : 'vertical',
+    roomId: widget.roomId,
+    playerId: widget.playerId,
+  );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Move failed: $error')),
-    );
-  } finally {
-    if (mounted) {
-      setState(() {
-        isSubmittingMove = false;
-      });
-    }
+  debugPrint('make_move returned: $result');
+
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(result)),
+  );
+
+  await loadGame();
+} catch (error, stackTrace) {
+  debugPrint('make_move FAILED: $error');
+  debugPrint('Stack trace: $stackTrace');
+
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Move failed: $error')),
+  );
+} finally {
+  if (mounted) {
+    setState(() {
+      isSubmittingMove = false;
+    });
   }
 }
 
