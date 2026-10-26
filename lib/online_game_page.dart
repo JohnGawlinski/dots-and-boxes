@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -41,7 +40,7 @@ class _OnlineGamePageState extends State<OnlineGamePage> {
 
   // Temporary testing ID.
   // Room 1 currently has player1id = 1.
-  // final int playerId = Random.secure().nextInt(2000000000) + 1;
+  final int playerId = Random.secure().nextInt(2000000000) + 1;
 
   bool isLoading = true;
   String? errorMessage;
@@ -103,58 +102,34 @@ Future<void> selectDot(int row, int col) async {
     isSubmittingMove = true;
   });
 
+  try {
+    final result = await gameService.makeMove(  
+      row: lineRow,
+      col: lineCol,
+      direction: horizontal ? 'horizontal' : 'vertical',
+      roomId: widget.roomId,
+      playerId: widget.playerId,
+    );
 
-  debugPrint('========== MAKE MOVE RPC ==========');
-  debugPrint('Function: public.make_move');
-  debugPrint('Parameters:');
+    if (!mounted) return;
 
-  params.forEach((key, value) {
-    debugPrint('  $key = $value (${value.runtimeType})');
-  });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(result)),
+    );
 
-  debugPrint('SQL equivalent:');
-  debugPrint(
-    "SELECT public.make_move("
-    "x := ${params['x']}, "
-    "y := ${params['y']}, "
-    "direction := '${params['direction']}', "
-    "roomid := ${params['roomid']}, "
-    "playerid := ${params['playerid']}"
-    ");",
-  );
-  debugPrint('===================================');
+    await loadGame();
+  } catch (error) {
+    if (!mounted) return;
 
-  final result = await gameService.makeMove(
-    row: lineRow,
-    col: lineCol,
-    direction: horizontal ? 'horizontal' : 'vertical',
-    roomId: widget.roomId,
-    playerId: widget.playerId,
-  );
-
-  debugPrint('make_move returned: $result');
-
-  if (!mounted) return;
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(result)),
-  );
-
-  await loadGame();
-} catch (error, stackTrace) {
-  debugPrint('make_move FAILED: $error');
-  debugPrint('Stack trace: $stackTrace');
-
-  if (!mounted) return;
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('Move failed: $error')),
-  );
-} finally {
-  if (mounted) {
-    setState(() {
-      isSubmittingMove = false;
-    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Move failed: $error')),
+    );
+  } finally {
+    if (mounted) {
+      setState(() {
+        isSubmittingMove = false;
+      });
+    }
   }
 }
 
