@@ -114,7 +114,7 @@ class DotsBoxesAI {
       Map<String, int> verticalLines,
    ) {
       final board = AiBoard(gridSize, horizontalLines, verticalLines);
-      final moves = AiBoard.availableMoves();
+      final moves = board.availableMoves();
 
       if (moves.isEmpty) return null;
 
