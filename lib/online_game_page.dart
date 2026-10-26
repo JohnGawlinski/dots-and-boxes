@@ -41,7 +41,7 @@ class _OnlineGamePageState extends State<OnlineGamePage> {
 
   // Temporary testing ID.
   // Room 1 currently has player1id = 1.
-  final int playerId = Random.secure().nextInt(2000000000) + 1;
+  // final int playerId = Random.secure().nextInt(2000000000) + 1;
 
   bool isLoading = true;
   String? errorMessage;
@@ -104,12 +104,13 @@ Future<void> selectDot(int row, int col) async {
   });
 
   try {
-    final result = await gameService.makeMove(  
+    final result = await gameService.makeMove(
       row: lineRow,
       col: lineCol,
       direction: horizontal ? 'horizontal' : 'vertical',
-      roomId: 1,
-      playerId: playerId,
+      roomId: widget.roomId,
+      playerId: widget.playerId,
+);
     );
 
     if (!mounted) return;
