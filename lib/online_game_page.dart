@@ -121,7 +121,7 @@ Future<void> selectDot(int row, int col) async {
         '--- makeMove Parameters ---\n'
         'row: $lineRow (${lineRow.runtimeType})\n'
         'col: $lineCol (${lineCol.runtimeType})\n'
-        'direction: ${horizontal ? 'horizontal' : 'vertical'} (${String.runtimeType})\n'
+        'direction: ${horizontal ? 'horizontal' : 'vertical'} (${(horizontal ? 'horizontal' : 'vertical').runtimeType})\n'
         'roomId: ${widget.roomId} (${widget.roomId.runtimeType})\n'
         'playerId: ${widget.playerId} (${widget.playerId.runtimeType})',
     ),
