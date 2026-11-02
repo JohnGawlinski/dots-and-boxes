@@ -60,6 +60,12 @@ class GameService {
     );
 
     return result.toString();
+  } catch (error, stackTrace) {
+    print('MAKE_MOVE ERROR: $error');
+    print('ERROR TYPE: ${error.runtimeType}');
+    print('STACK TRACE: $stackTrace');
+
+    rethrow;
   }
 
   Future<int> joinRoom({
