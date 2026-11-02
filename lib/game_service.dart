@@ -41,13 +41,14 @@ class GameService {
   }
 
   
-  Future<String> makeMove({
-    required int roomId,
-    required int playerId,
-    required int row,
-    required int col,
-    required String direction,
-  }) async {
+ Future<String> makeMove({
+  required int roomId,
+  required int playerId,
+  required int row,
+  required int col,
+  required String direction,
+}) async {
+  try {
     final result = await supabase.rpc(
       'make_move',
       params: {
@@ -60,6 +61,7 @@ class GameService {
     );
 
     return result.toString();
+
   } catch (error, stackTrace) {
     print('MAKE_MOVE ERROR: $error');
     print('ERROR TYPE: ${error.runtimeType}');
@@ -67,6 +69,7 @@ class GameService {
 
     rethrow;
   }
+}
 
   Future<int> joinRoom({
     required int playerId,
