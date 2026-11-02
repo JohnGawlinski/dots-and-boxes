@@ -114,8 +114,19 @@ Future<void> selectDot(int row, int col) async {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result)),
-    );
+    SnackBar(
+      duration: const Duration(seconds: 15),
+      content: Text(
+        '$result\n\n'
+        '--- makeMove Parameters ---\n'
+        'row: $lineRow (${lineRow.runtimeType})\n'
+        'col: $lineCol (${lineCol.runtimeType})\n'
+        'direction: ${horizontal ? 'horizontal' : 'vertical'} (${String.runtimeType})\n'
+        'roomId: ${widget.roomId} (${widget.roomId.runtimeType})\n'
+        'playerId: ${widget.playerId} (${widget.playerId.runtimeType})',
+    ),
+  ),
+);
 
     await loadGame();
   } catch (error) {
