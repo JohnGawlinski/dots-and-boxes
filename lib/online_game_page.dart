@@ -33,6 +33,7 @@ class _OnlineGamePageState extends State<OnlineGamePage> {
   int currentPlayer = 1;
   int player1Score = 0;
   int player2Score = 0;
+  int winner = 0;
 
   int? selectedRow;
   int? selectedCol;
@@ -176,7 +177,7 @@ Future<void> selectDot(int row, int col) async {
         currentPlayer = data['currentPlayer'] ?? 1;
         player1Score = data['player1Score'] ?? 0;
         player2Score = data['player2Score'] ?? 0;
-
+        winner = data['winner'] ?? 0;
         isLoading = false;
         errorMessage = null;
       });
@@ -363,16 +364,24 @@ Widget buildDot(int row, int col) {
                 : Column(
                     children: [
                       const SizedBox(height: 20),
-
                       Text(
-                        'Player $currentPlayer\'s Turn',
+                        winner == 0
+                            ? 'Player $currentPlayer\'s Turn'
+                            : winner == 1
+                                ? 'Player 1 Wins!'
+                                : winner == 2
+                                    ? 'Player 2 Wins!'
+                                    : 'Game Over',
                         style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
-                          color: playerColor(currentPlayer),
+                          color: winner == 0
+                              ? playerColor(currentPlayer)
+                              : winner == 1 || winner == 2
+                                  ? playerColor(winner)
+                                  : Colors.white,
                         ),
                       ),
-
                       const SizedBox(height: 10),
 
                       Row(
