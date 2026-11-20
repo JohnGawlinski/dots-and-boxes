@@ -96,6 +96,7 @@ class GameService {
     throw Exception(message);
   } 
   
+  
   Future<void> saveRoomCode(String code) async {
     await supabase
         .from('mile2board')
@@ -103,11 +104,19 @@ class GameService {
           'room_code': code,
           'player1id': 1,
           'player2id': null,
+          'horizontal_lines': <String, int>{},
+          'vertical_lines': <String, int>{},
+          'boxes': <String, int>{},
+          'p1_score': 0,
+          'p2_score': 0,
+          'turn': false,
+          'winner': 0,
         })
         .eq('roomid', 1)
         .select('roomid')
         .single();
   }
+
 
   Future<bool> verifyRoomCode(String code) async {
   final room = await supabase
