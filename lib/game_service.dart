@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class GameService {
@@ -98,6 +99,7 @@ class GameService {
   
   
   Future<void> saveRoomCode(String code) async {
+    debugPrint('NEW saveRoomCode function is running!');
     await supabase
         .from('mile2board')
         .update({
