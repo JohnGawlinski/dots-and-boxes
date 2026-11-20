@@ -173,6 +173,8 @@ class _OnlinePlayerSelectPageState
                       final isValid =
                           await GameService().joinAsPlayer2(code);
 
+                      debugPrint('PLAYER 2 JOIN RESULT: $isValid');
+
                       if (!mounted) return;
 
                       if (isValid) {
