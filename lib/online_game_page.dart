@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'game_service.dart';
@@ -35,6 +36,7 @@ class _OnlineGamePageState extends State<OnlineGamePage> {
 
   int? selectedRow;
   int? selectedCol;
+  Timer? refreshTimer;
 
   bool isSubmittingMove = false;
 
@@ -48,9 +50,22 @@ class _OnlineGamePageState extends State<OnlineGamePage> {
   @override
   void initState() {
     super.initState();
+    refreshTimer = Timer.periodic(
+      const Duration(seconds: 2),
+      (timer) {
+        if (mounted) {
+          loadGame();
+        }
+      },
+    );
     loadGame();
   }
 
+  @override
+  void dispose() {
+    refreshTimer?.cancel();
+    super.dispose();
+  }
 
 Future<void> selectDot(int row, int col) async {
   if (isSubmittingMove) return;
