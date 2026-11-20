@@ -2,6 +2,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'game_service.dart';
+import 'online_game_page.dart';
+import 'dart:async';
 
 class OnlinePlayerSelectPage extends StatefulWidget {
   const OnlinePlayerSelectPage({super.key});
@@ -18,6 +20,7 @@ class _OnlinePlayerSelectPageState
 
   String? roomCode;
   String? message;
+  Timer? waitingTimer;
 
   Future<void> selectPlayer1() async {
   final code = (Random.secure().nextInt(900000) + 100000)
@@ -32,6 +35,7 @@ class _OnlinePlayerSelectPageState
       roomCode = code;
       message = null;
     });
+    waitForPlayer2();
   } catch (error) {
     if (!mounted) return;
 
@@ -52,9 +56,45 @@ class _OnlinePlayerSelectPageState
 
   @override
   void dispose() {
+    waitingTimer?.cancel();
     codeController.dispose();
     super.dispose();
   }
+
+  void waitForPlayer2() {
+  waitingTimer?.cancel();
+
+  waitingTimer = Timer.periodic(
+    const Duration(seconds: 2),
+    (timer) async {
+      try {
+        final ready =
+            await GameService().areBothPlayersReady(1);
+
+        if (!mounted) {
+          timer.cancel();
+          return;
+        }
+
+        if (ready) {
+          timer.cancel();
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const OnlineGamePage(
+                roomId: 1,
+                playerId: 1,
+              ),
+            ),
+          );
+        }
+      } catch (error) {
+        debugPrint('Error checking for Player 2: $error');
+      }
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -131,14 +171,18 @@ class _OnlinePlayerSelectPageState
 
                     try {
                       final isValid =
-                          await GameService().verifyRoomCode(code);
+                          await GameService().joinAsPlayer2(code);
 
                       if (!mounted) return;
 
                       if (isValid) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Room found! Code matches.'),
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const OnlineGamePage(
+                              roomId: 1,
+                              playerId: 2,
+                            ),
                           ),
                         );
                       } else {

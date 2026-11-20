@@ -95,16 +95,18 @@ class GameService {
 
     throw Exception(message);
   } 
-
+  
   Future<void> saveRoomCode(String code) async {
-  await supabase
-      .from('mile2board')
-      .update({
-        'room_code': code,
-      })
-      .eq('roomid', 1)
-      .select('roomid')
-      .single();
+    await supabase
+        .from('mile2board')
+        .update({
+          'room_code': code,
+          'player1id': 1,
+          'player2id': null,
+        })
+        .eq('roomid', 1)
+        .select('roomid')
+        .single();
   }
 
   Future<bool> verifyRoomCode(String code) async {
@@ -119,5 +121,16 @@ class GameService {
   }
 
   return room['room_code'] == code;
+  }
+
+  Future<bool> joinAsPlayer2(String code) async {
+    final result = await supabase.rpc(
+      'join_room_as_player2',
+      params: {
+        'entered_code': code,
+      },
+    );
+
+    return result == true;
   }
 }
